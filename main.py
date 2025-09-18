@@ -43,20 +43,30 @@ def processar_texto(texto, stopwords_personalizadas):
     return tokens
 
 # Abertura do arquivo em .txt
-with open(r'C:\Users\ANA CELIA\Desktop\Google Drive desktop\Mineração python\.venv\2023-cepal-sexto-informe-anual-america-latina-agenda-2030.txt', mode='r', encoding='utf-8') as f:
+arquivo = r'C:\Users\ANA CELIA\Desktop\Google Drive desktop\Mineração python\.venv\2023-cepal-sexto-informe-anual-america-latina-agenda-2030.txt'
+lingua = input()  # 'es' para espanhol, 'pt' para português
+
+with open(arquivo, mode='r', encoding='utf-8') as f:
     texto = f.read()
 
-# Lista de stopwords
-stopwords_list = nltk.corpus.stopwords.words('spanish')
-stopwords_personalizadas = stopwords_list + ['agenda', 'caribe', 'comisión', 'economica', 'cepal', 'américa', 'latina', '2023', '2021', '2022', '2030', 'además', 'debe', 'naciones', 'unidas', 'ello', 'hacia']
+# Lista de stopwords em espanhol
+stopwords_list_esp = nltk.corpus.stopwords.words('spanish')
+stopwords_personalizadas_esp = stopwords_list_esp + ['agenda', 'caribe', 'comisión', 'economica', 'cepal', 'américa', 'latina', '2023', '2021', '2022', '2030', 'además', 'debe', 'naciones', 'unidas', 'ello', 'hacia']
+
+# Lista de stopwords em portugues
+stopwords_list_pt = nltk.corpus.stopwords.words('portuguese')
+stopwords_personalizadas_pt = stopwords_list_pt + ['agenda', 'caribe', 'comissão', 'econômica', 'cepal', 'américa', 'latina', '2023', '2021', '2022', '2030', 'além', 'deve', 'nações', 'unidas', 'ele', 'até']
 
 # Dividir o texto em blocos menores
 blocos = dividir_texto(texto)
 
-# Processar cada bloco e coletar os tokens
+# Processar cada bloco e coletar os tokens a partir da lingua de base
 tokens = []
 for bloco in blocos:
-    tokens.extend(processar_texto(bloco, stopwords_personalizadas))
+    tokens.extend(processar_texto(
+        bloco,
+        stopwords_personalizadas_esp if lingua == 'es' else stopwords_personalizadas_pt
+    ))
 
 # Frequência das palavras mais comuns
 freq = FreqDist(tokens)
@@ -84,7 +94,7 @@ plot_frequencia(freq_cinquenta_mais, "50 palavras mais frequentes", "frequencia_
 # Gerar a nuvem de palavras
 nuvem = WordCloud(
     background_color='white',
-    stopwords=set(stopwords_personalizadas),
+    stopwords=set(stopwords_personalizadas_esp),
     height=1080,
     width=1080,
     max_words=50
